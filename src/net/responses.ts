@@ -14,6 +14,18 @@ export class ErrorResponse {
   }
 }
 
+export class ClientResponse {
+  status: 'success' | 'error';
+  data?: any;
+  error?: any;
+
+  constructor(status, data=null, error=null) {
+    this.status = status;
+    this.data = data;
+    this.error = error;
+  }
+}
+
 const ERROR_RES_CONSTRUCTOR_NAME = new ErrorResponse('').constructor.name;
 const SUCCESS_RES_CONSTRUCTOR_NAME = new SuccessResponse({}).constructor.name;
 

@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { validateLoginReqData } from './validators';
+import { validateLoginReqData, validateRegistrationData } from './validators';
 import { signUp } from './authControllers';
 
 const authRouter = Router();
 
-authRouter.post('/register', signUp);
+authRouter.post('/register', validateRegistrationData, signUp);
 
 authRouter.post('/login', validateLoginReqData, (_, res) => {
   res.send('login successful');

@@ -1,24 +1,29 @@
 export class SuccessResponse {
   data: any;
+  status: string
 
-  constructor(data: any) {
+  constructor(data: any, status="success") {
     this.data = data;
+    this.status = status;
   }
 
   resolve(): boolean {
-    return true
+    return true;
   }
 }
 
 export class ErrorResponse {
   message: string;
+  status: string;
+  code: number;
 
-  constructor(message: string) {
-    this.message = message
+  constructor(message: string, status='error') {
+    this.message = message;
+    this.status = status;
   }
 
   resolve(): boolean {
-    return false
+    return false;
   }
 }
 

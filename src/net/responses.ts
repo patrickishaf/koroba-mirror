@@ -4,6 +4,10 @@ export class SuccessResponse {
   constructor(data: any) {
     this.data = data;
   }
+
+  resolve(): boolean {
+    return true
+  }
 }
 
 export class ErrorResponse {
@@ -11,6 +15,10 @@ export class ErrorResponse {
 
   constructor(message: string) {
     this.message = message
+  }
+
+  resolve(): boolean {
+    return false
   }
 }
 

@@ -20,10 +20,6 @@ app.use(cors({
   credentials: true,
 }))
 
-app.get('/', (_, res: Response) => {
-  res.send('debug welcome to home');
-})
-
 app.use('/trading', tradingRouter);
 app.use('/notifications', notificationsRouter);
 app.use('/auth', authRouter);
@@ -31,6 +27,10 @@ app.use('/wallets', walletsRouter);
 app.use('/settings', userSettingsRouter);
 app.use('/txns', txnsRouter);
 app.use('/price_alerts', priceAlertsRouter);
+
+app.get('/', (_, res: Response) => {
+  res.send('debug welcome to home');
+})
 
 app.listen(3000, () => {
   mongoose.connect(process.env.DB_URL);

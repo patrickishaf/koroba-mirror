@@ -19,3 +19,7 @@ export interface TemporaryOTPData {
   otp: number,
   isExpired?: boolean,
 }
+
+export interface OTPResendReqData {
+  email: string
+}

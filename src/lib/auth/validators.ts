@@ -17,6 +17,10 @@ const otpSchema = Joi.object({
   otp: Joi.number().integer().positive().max(999999),
 })
 
+const otpResendSchema = Joi.object({
+  email: Joi.string().email().max(64).required(),
+})
+
 const createErrorResponseFromValidationState = (validationState: any) => {
   return new ErrorResponse(validationState.error.details[0].message);
 }
@@ -45,4 +49,12 @@ export const validateOTPSubmissionReqBody = (req: Request, res: Response, next: 
   } else {
     next();
   }
+}
+
+export const validateOTPResendData = (req: Request, res: Response, next: NextFunction) => {
+  const validationState = otpResendSchema.validate(req.body);
+  if (validationState.hasOwnProperty('error')) {
+    return res.status(400).send(createErrorResponseFromValidationState(validationState));
+  }
+  next();
 }

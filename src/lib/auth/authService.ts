@@ -105,3 +105,12 @@ export const clearOTPData = async (email: string) => {
     throw new Error(err.message);
   }
 }
+
+export const revalidateOTP = async (email: string, newOTP: number) => {
+  try {
+    return await PendingOTPModel.findOneAndUpdate({ email }, { otp: newOTP, isExpired: false });
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}

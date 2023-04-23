@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ErrorResponse, SuccessResponse } from "../../net/responses";
-import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findEmailWithOTP, clearOTPData, invalidateOTP } from "./authService";
-import { TemporaryOTPData, ValidatedLoginReqBody, ValidatedOTPSubmissionReqBody, ValidatedSignUpReqBody } from "./models";
+import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findEmailWithOTP, clearOTPData, invalidateOTP, revalidateOTP } from "./authService";
+import { OTPResendReqData, TemporaryOTPData, ValidatedLoginReqBody, ValidatedOTPSubmissionReqBody, ValidatedSignUpReqBody } from "./models";
 import * as ErrorMessages from "../../net/errorMessages";
 import { OTP_INVALIDATION_DELAY } from "./utils";
 
@@ -142,15 +142,23 @@ export const verifyLoginEmail = async (req: Request, res: Response) => {
   }
 }
 
-// export const resendVerificationEmail = async (req: Request, res: Response) => {
-//   try {
-//     // TODO: Add email validation to tis endpoint so that a user willnot generate an OTP for an unverified email
-//     const result = await saveOTPDataTemporarily(req.body.email, generateOTP());
-//     res.status(200).send(SuccessResponse.from({
-//       otp: result.otp
-//     }));
-//   } catch (e) {
-//     const err = e as Error;
-//     res.status(500).json(ErrorResponse.from(err.message));
-//   }
-// }
+export const resendVerificationEmail = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body as OTPResendReqData;
+    const existingOTPRecord = await findEmailWithOTP(email);
+
+    if (existingOTPRecord === null) return res.status(405).json(ErrorResponse.from(ErrorMessages.noPendingOTP))
+    if (existingOTPRecord.isExpired === false) return res.status(403).json(ErrorResponse.from(ErrorMessages.OTPStillValid));
+
+    const otp = generateOTP();
+    await revalidateOTP(email, otp);
+
+    res.status(200).json(SuccessResponse.from({
+      email,
+      otp,
+    }));
+  } catch (e) {
+    const err = e as Error;
+    res.status(500).json(ErrorResponse.from(err.message));
+  }
+}

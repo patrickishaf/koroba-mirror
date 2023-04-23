@@ -3,8 +3,8 @@ import Joi from "joi";
 import { ErrorResponse } from "../../net";
 
 const loginReqBodySchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(64).required(),
-  passsword: Joi.string().min(8).max(64).required(),
+  email: Joi.string().email().max(64).required(),
+  password: Joi.string().min(8).max(64).required(),
 })
 
 const registrationReqBodySchema = Joi.object({
@@ -15,7 +15,7 @@ const registrationReqBodySchema = Joi.object({
 export const validateLoginReqData = (req: Request, res: Response, next: NextFunction) => {
   const validationState = loginReqBodySchema.validate(req.body);
   if (validationState.hasOwnProperty('error')) {
-    res.send(validationState);
+    res.status(400).send(createErrorResponseFromValidationState(validationState));
   } else {
     next();
   }
@@ -24,11 +24,11 @@ export const validateLoginReqData = (req: Request, res: Response, next: NextFunc
 export const validateRegistrationData = (req: Request, res: Response, next: NextFunction) => {
   const validationState = registrationReqBodySchema.validate(req.body);
   if (validationState.hasOwnProperty('error')) {
-    return res.status(400).send(createErrorResponseFromValidationError(validationState));
+    return res.status(400).send(createErrorResponseFromValidationState(validationState));
   }
   next();
 }
 
-const createErrorResponseFromValidationError = (validationState: any) => {
+const createErrorResponseFromValidationState = (validationState: any) => {
   return new ErrorResponse(validationState.error.details[0].message);
 }

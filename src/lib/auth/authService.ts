@@ -1,4 +1,4 @@
-import { genSalt, hash } from "bcrypt";
+import { compare, genSalt, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { UserModel } from "../../db/models";
 import { ValidatedSignUpReqBody } from "./models";
@@ -35,10 +35,28 @@ export const checkIfEmailIsTaken = async (email: string): Promise<boolean> => {
   }
 }
 
+export const findUserWithEmail = async (email: string) => {
+  try {
+    return await UserModel.findOne({ email }, 'email password').exec();
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
 export const generateAccessToken = (user: any) => {
   return sign(user, process.env.JWT_SECRET);
 }
 
 export const generateRefreshToken = (user: any) => {
   return sign(user, process.env.REFRESH_TOKEN_SECRET);
+}
+
+export const checkIfPasswordsMatch = async (normalPassword: string, hashedPassword: string): Promise<boolean> => {
+  try {
+    return await compare(normalPassword, hashedPassword);
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
 }

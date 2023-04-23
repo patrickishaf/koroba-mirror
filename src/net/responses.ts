@@ -7,6 +7,10 @@ export class SuccessResponse {
     this.status = status;
   }
 
+  static from(data: any): SuccessResponse {
+    return new SuccessResponse(data);
+  }
+
   resolve(): boolean {
     return true;
   }
@@ -20,6 +24,10 @@ export class ErrorResponse {
   constructor(message: string, status='error') {
     this.message = message;
     this.status = status;
+  }
+
+  static from(message: string): ErrorResponse {
+    return new ErrorResponse(message);
   }
 
   resolve(): boolean {

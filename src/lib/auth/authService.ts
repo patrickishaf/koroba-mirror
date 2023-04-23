@@ -1,7 +1,7 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { PendingOTPModel, UserModel } from "../../db/models";
-import { ValidatedSignUpReqBody } from "./models";
+import { TemporaryOTPData, ValidatedSignUpReqBody } from "./models";
 
 export const saveUserToDb = async (user: ValidatedSignUpReqBody) => {
   try {
@@ -66,10 +66,21 @@ export const generateOTP = (): number => {
   return otp;
 }
 
-export const saveOTPTemporarily = async (email: string, otp: number) => {
+export const saveOTPDataTemporarily = async (data: TemporaryOTPData) => {
   try {
-    const pendingOTP = new PendingOTPModel({ email, otp })
+    const pendingOTP = new PendingOTPModel({ email: data.email, password: data.password, otp: data.otp, isExpired: false });
     return await pendingOTP.save();
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
+export const findEmailWithOTP = async (email: string) => {
+  try {
+    const existingRecord = await PendingOTPModel.findOne({ email }).exec();
+    console.log(existingRecord);
+    return existingRecord;
   } catch (e) {
     const err = e as Error;
     throw new Error(err.message);

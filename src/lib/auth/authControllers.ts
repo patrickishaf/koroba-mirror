@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ErrorResponse, SuccessResponse } from "../../net/responses";
-import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPTemporarily, generateOTP } from "./authService";
-import { ValidatedLoginReqBody, ValidatedSignUpReqBody } from "./models";
+import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findEmailWithOTP } from "./authService";
+import { TemporaryOTPData, ValidatedLoginReqBody, ValidatedOTPSubmissionReqBody, ValidatedSignUpReqBody } from "./models";
 import * as ErrorMessages from "../../net/errorMessages";
 
 export const signUp = async (req: Request, res: Response) => {
@@ -15,20 +15,23 @@ export const signUp = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await hashPassword(password)
+    const otp = generateOTP();
 
-    const user: ValidatedSignUpReqBody = {
+    const temporaryOTPData: TemporaryOTPData = {
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      otp
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    const result = await saveUserToDb(user);
+    setTimeout(() => {
+      // invalidate OTP
+    }, 18000);
+
+    const result = await saveOTPDataTemporarily(temporaryOTPData);
     
     res.status(200).json(SuccessResponse.from({
       email: result.email,
-      accessToken: accessToken,
-      refreshToken: refreshToken
+      otp: result.otp
     }));
   } catch (e) {
     const err = e as Error;
@@ -62,15 +65,45 @@ export const login =  async (req: Request, res: Response) => {
   }
 }
 
-export const resendVerificationEmail = async (req: Request, res: Response) => {
+export const verifyRegistrationEmail = async (req: Request, res: Response) => {
   try {
-    // TODO: Add email validation to tis endpoint so that a user willnot generate an OTP for an unverified email
-    const result = await saveOTPTemporarily(req.body.email, generateOTP());
-    res.status(200).send(SuccessResponse.from({
-      otp: result.otp
+    const { email, otp } = req.body as ValidatedOTPSubmissionReqBody;
+    const pendingOTPRecord = await findEmailWithOTP(email);
+
+    if (pendingOTPRecord === null) return res.status(403).json(ErrorResponse.from(ErrorMessages.expiredOTP));
+    if (pendingOTPRecord.isExpired === true) return res.status(403).json(ErrorResponse.from(ErrorMessages.expiredOTP));
+    if (pendingOTPRecord.otp !== otp) return res.status(403).json(ErrorResponse.from(ErrorMessages.invalidOTP));
+
+    const user = {
+      email,
+      password: pendingOTPRecord.password,
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    const result = await saveUserToDb(user);
+
+    res.status(200).json(SuccessResponse.from({
+      email: result.email,
+      accessToken: accessToken,
+      refreshToken: refreshToken
     }));
+
   } catch (e) {
     const err = e as Error;
     res.status(500).json(ErrorResponse.from(err.message));
   }
 }
+
+// export const resendVerificationEmail = async (req: Request, res: Response) => {
+//   try {
+//     // TODO: Add email validation to tis endpoint so that a user willnot generate an OTP for an unverified email
+//     const result = await saveOTPDataTemporarily(req.body.email, generateOTP());
+//     res.status(200).send(SuccessResponse.from({
+//       otp: result.otp
+//     }));
+//   } catch (e) {
+//     const err = e as Error;
+//     res.status(500).json(ErrorResponse.from(err.message));
+//   }
+// }

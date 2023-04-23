@@ -62,7 +62,7 @@ export const checkIfPasswordsMatch = async (normalPassword: string, hashedPasswo
 }
 
 export const generateOTP = (): number => {
-  const otp = Math.floor(Math.random() * 1000000)
+  const otp = Math.floor(Math.random() * 100000)
   return otp;
 }
 

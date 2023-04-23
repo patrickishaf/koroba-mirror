@@ -14,7 +14,7 @@ const registrationReqBodySchema = Joi.object({
 
 const otpSchema = Joi.object({
   email: Joi.string().email().max(64).required(),
-  otp: Joi.number().integer().positive().max(999999),
+  otp: Joi.number().integer().positive().max(99999),
 })
 
 const otpResendSchema = Joi.object({

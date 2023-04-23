@@ -36,3 +36,8 @@ export const walletSchema = new mongoose.Schema({
   address: String,
   balance: Number,
 });
+
+export const PendingOTPSchema = new mongoose.Schema({
+  email: String,
+  otp: Number
+})

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ErrorResponse, SuccessResponse } from "../../net/responses";
-import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch } from "./authService";
+import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPTemporarily, generateOTP } from "./authService";
 import { ValidatedLoginReqBody, ValidatedSignUpReqBody } from "./models";
 import * as ErrorMessages from "../../net/errorMessages";
 
@@ -55,6 +55,19 @@ export const login =  async (req: Request, res: Response) => {
     res.status(200).json(SuccessResponse.from({
       ...user,
       accessToken,
+    }));
+  } catch (e) {
+    const err = e as Error;
+    res.status(500).json(ErrorResponse.from(err.message));
+  }
+}
+
+export const resendVerificationEmail = async (req: Request, res: Response) => {
+  try {
+    // TODO: Add email validation to tis endpoint so that a user willnot generate an OTP for an unverified email
+    const result = await saveOTPTemporarily(req.body.email, generateOTP());
+    res.status(200).send(SuccessResponse.from({
+      otp: result.otp
     }));
   } catch (e) {
     const err = e as Error;

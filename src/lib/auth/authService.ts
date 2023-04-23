@@ -1,6 +1,6 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { UserModel } from "../../db/models";
+import { PendingOTPModel, UserModel } from "../../db/models";
 import { ValidatedSignUpReqBody } from "./models";
 
 export const saveUserToDb = async (user: ValidatedSignUpReqBody) => {
@@ -55,6 +55,21 @@ export const generateRefreshToken = (user: any) => {
 export const checkIfPasswordsMatch = async (normalPassword: string, hashedPassword: string): Promise<boolean> => {
   try {
     return await compare(normalPassword, hashedPassword);
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
+export const generateOTP = (): number => {
+  const otp = Math.floor(Math.random() * 1000000)
+  return otp;
+}
+
+export const saveOTPTemporarily = async (email: string, otp: number) => {
+  try {
+    const pendingOTP = new PendingOTPModel({ email, otp })
+    return await pendingOTP.save();
   } catch (e) {
     const err = e as Error;
     throw new Error(err.message);

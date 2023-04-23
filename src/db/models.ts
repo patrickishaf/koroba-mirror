@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { coinSchema, notificationSchema, transactionSchema, userSchema, walletSchema } from './schemata';
+import { PendingOTPSchema, coinSchema, notificationSchema, transactionSchema, userSchema, walletSchema } from './schemata';
 
 export const UserModel = mongoose.model('User', userSchema);
 
@@ -10,3 +10,5 @@ export const TransactionModel = mongoose.model('Transaction', transactionSchema)
 export const CoinModel = mongoose.model('Coin', coinSchema);
 
 export const WalletModel = mongoose.model('Wallet', walletSchema);
+
+export const PendingOTPModel = mongoose.model('PendingOTP', PendingOTPSchema);

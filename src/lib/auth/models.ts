@@ -9,7 +9,7 @@ export interface ValidatedLoginReqBody {
 }
 
 export interface ValidatedOTPSubmissionReqBody {
-  email: string,
+  email?: string,
   otp: number,
 }
 

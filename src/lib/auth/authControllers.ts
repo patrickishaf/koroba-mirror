@@ -55,14 +55,27 @@ export const login =  async (req: Request, res: Response) => {
 
     if (!passwordsMatch) return res.status(401).json(ErrorResponse.from(ErrorMessages.unauthorized));
 
-    const accessToken = generateAccessToken({
-      email: user.email,
+    const otp = generateOTP();
+
+    const temporaryOTPData: TemporaryOTPData = {
+      email,
       password: user.password,
-    });
+      otp
+    }
+
+    setTimeout(() => {
+      async function invalidate() {
+        // This function will return null if the otp has already been verified and cleared. It won't throw an error and interrupt the reg flow so there's no need to handle its error case.
+        await invalidateOTP(email)
+      }
+      invalidate();
+    }, OTP_INVALIDATION_DELAY);
+
+    const result = await saveOTPDataTemporarily(temporaryOTPData);
 
     res.status(200).json(SuccessResponse.from({
-      ...user,
-      accessToken,
+      email,
+      otp: result.otp
     }));
   } catch (e) {
     const err = e as Error;
@@ -86,7 +99,9 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-    const deletedOTPRecord = await clearOTPData(user.email);
+
+    await clearOTPData(user.email);
+
     const result = await saveUserToDb(user);
 
     res.status(200).json(SuccessResponse.from({
@@ -95,6 +110,32 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
       refreshToken: refreshToken
     }));
 
+  } catch (e) {
+    const err = e as Error;
+    res.status(500).json(ErrorResponse.from(err.message));
+  }
+}
+
+export const verifyLoginEmail = async (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body as ValidatedOTPSubmissionReqBody;
+    const pendingOTPRecord = await findEmailWithOTP(email);
+
+    if (pendingOTPRecord === null) return res.status(403).json(ErrorResponse.from(ErrorMessages.expiredOTP));
+    if (pendingOTPRecord.isExpired === true) return res.status(403).json(ErrorResponse.from(ErrorMessages.expiredOTP));
+    if (pendingOTPRecord.otp !== otp) return res.status(403).json(ErrorResponse.from(ErrorMessages.invalidOTP));
+    
+    const accessToken = generateAccessToken({
+      email: pendingOTPRecord.email,
+      password: pendingOTPRecord.password,
+    });
+
+    await clearOTPData(pendingOTPRecord.email);
+
+    res.status(200).json(SuccessResponse.from({
+      email: pendingOTPRecord.email,
+      accessToken,
+    }));
   } catch (e) {
     const err = e as Error;
     res.status(500).json(ErrorResponse.from(err.message));

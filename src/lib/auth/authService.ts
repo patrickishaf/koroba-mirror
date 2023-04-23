@@ -79,8 +79,27 @@ export const saveOTPDataTemporarily = async (data: TemporaryOTPData) => {
 export const findEmailWithOTP = async (email: string) => {
   try {
     const existingRecord = await PendingOTPModel.findOne({ email }).exec();
-    console.log(existingRecord);
     return existingRecord;
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
+export const invalidateOTP = async (email: string) => {
+  try {
+    const existingOTPRecord = await PendingOTPModel.findOneAndUpdate({ email }, { isExpired: true });
+    return existingOTPRecord;
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
+export const clearOTPData = async (email: string) => {
+  try {
+    const existing = await PendingOTPModel.findOneAndDelete({ email });
+    return existing;
   } catch (e) {
     const err = e as Error;
     throw new Error(err.message);

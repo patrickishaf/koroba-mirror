@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { ErrorResponse, SuccessResponse } from "../../net/responses";
-import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findEmailWithOTP } from "./authService";
+import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findEmailWithOTP, clearOTPData, invalidateOTP } from "./authService";
 import { TemporaryOTPData, ValidatedLoginReqBody, ValidatedOTPSubmissionReqBody, ValidatedSignUpReqBody } from "./models";
 import * as ErrorMessages from "../../net/errorMessages";
+import { OTP_INVALIDATION_DELAY } from "./utils";
 
 export const signUp = async (req: Request, res: Response) => {
   try {
@@ -24,8 +25,12 @@ export const signUp = async (req: Request, res: Response) => {
     }
 
     setTimeout(() => {
-      // invalidate OTP
-    }, 18000);
+      async function invalidate() {
+        // This function will return null if the otp has already been verified and cleared. It won't throw an error and interrupt the reg flow so there's no need to handle its error case.
+        await invalidateOTP(email)
+      }
+      invalidate();
+    }, OTP_INVALIDATION_DELAY);
 
     const result = await saveOTPDataTemporarily(temporaryOTPData);
     
@@ -81,6 +86,7 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+    const deletedOTPRecord = await clearOTPData(user.email);
     const result = await saveUserToDb(user);
 
     res.status(200).json(SuccessResponse.from({

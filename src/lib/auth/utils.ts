@@ -1,0 +1,1 @@
+export const OTP_INVALIDATION_DELAY: number = 900000;

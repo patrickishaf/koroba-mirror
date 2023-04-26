@@ -6,3 +6,5 @@ export const invalidOTP = 'your otp is invalid';
 export const expiredOTP = 'your otp has expired. Request for a new one';
 export const noPendingOTP = 'you haven\'t even asked for an otp to begin with';
 export const OTPStillValid = 'your otp is still valid';
+export const noAuthHeader = 'no authorization header present';
+export const invalidAuthHeader = 'yor auth header is invalid';

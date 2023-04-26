@@ -1,7 +1,29 @@
 import { Request, Response } from "express";
 import { ErrorResponse, SuccessResponse } from "../../net/responses";
-import { hashPassword, checkIfEmailIsTaken, saveUserToDb, generateAccessToken, generateRefreshToken, findUserWithEmail, checkIfPasswordsMatch, saveOTPDataTemporarily, generateOTP, findOTPRecordWithMatchingEmail, clearOTPData, invalidateOTP, revalidateOTP, generatePasswordResetOTP, changePassword } from "./authService";
-import { OTPResendReqData, TemporaryOTPData, ValidatedLoginReqBody, ValidatedOTPSubmissionReqBody, ValidatedSignUpReqBody } from "./models";
+import { 
+  hashPassword,
+  checkIfEmailIsTaken,
+  saveUserToDb,
+  generateAccessToken,
+  generateRefreshToken,
+  findUserWithEmail,
+  checkIfPasswordsMatch,
+  saveOTPDataTemporarily,
+  generateOTP,
+  findOTPRecordWithMatchingEmail,
+  clearOTPData,
+  invalidateOTP,
+  revalidateOTP,
+  generatePasswordResetOTP,
+  changePassword
+} from "./authService";
+import {
+  OTPResendReqData,
+  TemporaryOTPData,
+  ValidatedLoginReqBody,
+  ValidatedOTPSubmissionReqBody,
+  ValidatedSignUpReqBody
+} from "./models";
 import * as ErrorMessages from "../../net/errorMessages";
 import { OTP_INVALIDATION_DELAY } from "./utils";
 

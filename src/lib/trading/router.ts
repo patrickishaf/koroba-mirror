@@ -8,8 +8,4 @@ tradingRouter.use(authenticateUser);
 
 tradingRouter.get('/rates', getRates);
 
-tradingRouter.get('/rate', (req, res) => {
-  res.status(200).send("rate is rate");
-})
-
 export default tradingRouter;

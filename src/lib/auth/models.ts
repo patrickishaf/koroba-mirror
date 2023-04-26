@@ -23,3 +23,10 @@ export interface TemporaryOTPData {
 export interface OTPResendReqData {
   email: string
 }
+
+export interface PasswordResetOTPData {
+  email: string,
+  otp: number,
+  type: string,
+  isExpired?: boolean,
+}

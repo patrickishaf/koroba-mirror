@@ -62,8 +62,7 @@ export const checkIfPasswordsMatch = async (normalPassword: string, hashedPasswo
 }
 
 export const generateOTP = (): number => {
-  const otp = Math.floor(Math.random() * 100000)
-  return otp;
+  return Math.floor(Math.random() * 100000);
 }
 
 export const saveOTPDataTemporarily = async (data: TemporaryOTPData) => {
@@ -76,7 +75,7 @@ export const saveOTPDataTemporarily = async (data: TemporaryOTPData) => {
   }
 }
 
-export const findEmailWithOTP = async (email: string) => {
+export const findOTPRecordWithMatchingEmail = async (email: string) => {
   try {
     const existingRecord = await PendingOTPModel.findOne({ email }).exec();
     return existingRecord;
@@ -109,6 +108,20 @@ export const clearOTPData = async (email: string) => {
 export const revalidateOTP = async (email: string, newOTP: number) => {
   try {
     return await PendingOTPModel.findOneAndUpdate({ email }, { otp: newOTP, isExpired: false });
+  } catch (e) {
+    const err = e as Error;
+    throw new Error(err.message);
+  }
+}
+
+export const generatePasswordResetOTP = () => {
+  return Math.floor(Math.random() * 1000000);
+}
+
+export const changePassword = async (newPassword: string, email: string) => {
+  try {
+    const userWithNewPassword = await UserModel.findOneAndUpdate({ email }, { password: newPassword });
+    return userWithNewPassword;
   } catch (e) {
     const err = e as Error;
     throw new Error(err.message);

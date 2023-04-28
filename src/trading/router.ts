@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getRates } from "./controller";
-import authenticateUser from "../../middleware/authenticateUser";
+import authenticateUser from "../middleware/authenticateUser";
 
 const tradingRouter = Router();
 

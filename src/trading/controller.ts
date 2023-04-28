@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import HttpClient from "../../net/httpClient"
+import HttpClient from "../net/httpClient"
 import trading_urls from "./urls";
 import tradingResponseHandler from "./tradingResponseHandler";
 

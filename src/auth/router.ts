@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { validateLoginReqData, validateOTPResendData, validateOTPSubmissionReqBody, validatePasswordChangeData, validatePasswordResetData, validatePasswordRetrievalData, validateRegistrationData } from './validators';
 import { completePasswordReset, login, resendVerificationEmail, resetPassword, signUp, startPasswordReset, verifyLoginEmail, verifyRegistrationEmail } from './authControllers';
-import authenticateUser from '../../middleware/authenticateUser';
+import authenticateUser from '../middleware/authenticateUser';
 
 const authRouter = Router();
 

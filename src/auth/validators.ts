@@ -1,6 +1,6 @@
 import { NextFunction, type Request, type Response } from "express";
 import Joi from "joi";
-import { ErrorResponse } from "../../net";
+import { ErrorResponse } from "../net";
 
 const useSchemaToValidate = (schema: Joi.ObjectSchema<any>, req: Request, res: Response, next: NextFunction) => {
   const validationState = schema.validate(req.body);

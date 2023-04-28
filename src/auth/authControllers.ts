@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ErrorResponse, SuccessResponse } from "../../net/responses";
+import { ErrorResponse, SuccessResponse } from "../net/responses";
 import { 
   hashPassword,
   checkIfEmailIsTaken,
@@ -24,7 +24,7 @@ import {
   ValidatedOTPSubmissionReqBody,
   ValidatedSignUpReqBody
 } from "./models";
-import * as ErrorMessages from "../../net/errorMessages";
+import * as ErrorMessages from "../net/errorMessages";
 import { OTP_INVALIDATION_DELAY } from "./utils";
 
 export const signUp = async (req: Request, res: Response) => {

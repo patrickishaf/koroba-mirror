@@ -1,4 +1,4 @@
-import { ErrorResponse, ResponseHandler, SuccessResponse } from "../../net";
+import { ErrorResponse, ResponseHandler, SuccessResponse } from "../net";
 
 const tradingResponseHandler: ResponseHandler = {
   handleResponse(res: any) {

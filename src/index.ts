@@ -1,14 +1,14 @@
 import express, { Response } from 'express';
 import cors from 'cors';
-import authRouter from './lib/auth/router';
+import authRouter from './auth/router';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import walletsRouter from './lib/wallets/router';
-import tradingRouter from './lib/trading/router';
-import notificationsRouter from './lib/notifications/router';
-import userSettingsRouter from './lib/settings/router';
-import txnsRouter from './lib/transactions/router';
-import priceAlertsRouter from './lib/price_alerts/router';
+import walletsRouter from './wallets/router';
+import tradingRouter from './trading/router';
+import notificationsRouter from './notifications/router';
+import userSettingsRouter from './settings/router';
+import txnsRouter from './transactions/router';
+import priceAlertsRouter from './price_alerts/router';
 
 dotenv.config();
 const app = express();

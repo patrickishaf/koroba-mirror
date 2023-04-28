@@ -14,12 +14,12 @@ export const priceAlertSchema = new mongoose.Schema({
   message: String,
   type: String,
   timestamp: Date
-})
+});
 
 export const userSettingSchema = new mongoose.Schema({
   key: String,
   value: Boolean
-})
+});
 
 export const transactionSchema = new mongoose.Schema({
   amount: Number,
@@ -42,4 +42,19 @@ export const PendingOTPSchema = new mongoose.Schema({
   otp: Number,
   password: String,
   isExpired: Boolean,
+});
+
+export const NotificationSettingFieldsetSchema = new mongoose.Schema({
+  email: Boolean,
+  sms: Boolean,
+});
+
+export const NotificationSettingItemSchema = new mongoose.Schema({
+  name: String,
+  options: NotificationSettingFieldsetSchema
+});
+
+export const UserNotificationSettingsSchema = new mongoose.Schema({
+  userID: String,
+  settings: [NotificationSettingItemSchema]
 })

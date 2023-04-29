@@ -1,16 +1,19 @@
 import mongoose from 'mongoose';
-import { PendingOTPSchema, UserNotificationSettingsSchema, coinSchema, notificationSchema, transactionSchema, userSchema, walletSchema } from './schemata';
+import {
+  PendingOTPSchema,
+  CoinSchema, NotificationSchema, TransactionSchema, WalletSchema, UserSettingsSchema, UserSchema
+} from './schemata';
 
-export const UserModel = mongoose.model('User', userSchema);
+export const UserModel = mongoose.model('User', UserSchema);
 
-export const NotificationModel = mongoose.model('Notification', notificationSchema);
+export const NotificationModel = mongoose.model('Notification', NotificationSchema);
 
-export const TransactionModel = mongoose.model('Transaction', transactionSchema);
+export const TransactionModel = mongoose.model('Transaction', TransactionSchema);
 
-export const CoinModel = mongoose.model('Coin', coinSchema);
+export const CoinModel = mongoose.model('Coin', CoinSchema);
 
-export const WalletModel = mongoose.model('Wallet', walletSchema);
+export const WalletModel = mongoose.model('Wallet', WalletSchema);
 
 export const PendingOTPModel = mongoose.model('PendingOTP', PendingOTPSchema);
 
-export const UserNotificationSettingsModel = mongoose.model('UserNotificationSetting', UserNotificationSettingsSchema);
+export const UserSettingsModel = mongoose.model('UserSetting', UserSettingsSchema);

@@ -1,9 +1,9 @@
 import { UserModel } from "../db/models";
-import { DefaultUserSettings, UserSettings } from "./models";
+import { defaultUserSettings } from "./defaultSettings";
 
-export const addSettingsToUser = async (settings: DefaultUserSettings | UserSettings, user: any) => {
+export const addDefaultSettingsToUser = async (userID: string) => {
   try {
-    const existingUser = await UserModel.findOneAndUpdate({ email: user.email }, { settings });
+    const existingUser = await UserModel.findOneAndUpdate({ id: userID }, { settings: defaultUserSettings });
     return existingUser;
   } catch (e) {
     const err = e as Error;

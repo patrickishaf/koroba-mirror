@@ -41,7 +41,7 @@ export const defaultNotificationSettings = {
 
 export const generalSettings = {
   primaryCurrency: 'USD',
-  kycVerificationStatus: 'unverified'
+  kycVerificationStatus: 0
 }
 
 export const defaultUserSettings = {

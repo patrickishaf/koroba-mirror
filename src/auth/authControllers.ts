@@ -27,6 +27,8 @@ import {
 } from "./models";
 import * as ErrorMessages from "../net/errorMessages";
 import { OTP_INVALIDATION_DELAY } from "./utils";
+import settingsEventBus from "../settings/settingsEventBus";
+import { SettingsEvents } from "../core/events";
 
 export const signUp = async (req: Request, res: Response) => {
   try {
@@ -135,6 +137,8 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
     await clearOTPData(user.email);
 
     const result = await saveUserToDb(user);
+    
+    settingsEventBus.emit(SettingsEvents.CREATE_USER_SETTINGS, result.id);
 
     res.status(200).json(SuccessResponse.from({
       id: result.id,

@@ -1,7 +1,12 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
 import { PendingOTPModel, UserModel } from "../db/models";
 import { TemporaryOTPData, ValidatedSignUpReqBody } from "./models";
+
+export const generateUserID = () => {
+  return uuid();
+}
 
 export const saveUserToDb = async (user: ValidatedSignUpReqBody) => {
   try {

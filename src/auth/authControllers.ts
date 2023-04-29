@@ -15,7 +15,8 @@ import {
   invalidateOTP,
   revalidateOTP,
   generatePasswordResetOTP,
-  changePassword
+  changePassword,
+  generateUserID
 } from "./authService";
 import {
   OTPResendReqData,
@@ -120,7 +121,10 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
     if (pendingOTPRecord.isExpired === true) return res.status(403).json(ErrorResponse.from(ErrorMessages.expiredOTP));
     if (pendingOTPRecord.otp !== otp) return res.status(403).json(ErrorResponse.from(ErrorMessages.invalidOTP));
 
+    const userID = generateUserID();
+
     const user = {
+      id: userID,
       email,
       password: pendingOTPRecord.password,
     }
@@ -133,6 +137,7 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
     const result = await saveUserToDb(user);
 
     res.status(200).json(SuccessResponse.from({
+      id: result.id,
       email: result.email,
       accessToken: accessToken,
       refreshToken: refreshToken

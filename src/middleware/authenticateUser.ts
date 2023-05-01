@@ -6,7 +6,7 @@ import * as ErrorMessages from "../net/errorMessages";
 const authenticateUser = (req: Request & any, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
-  if (authorization === null) return res.status(401).json(ErrorResponse.from(ErrorMessages.noAuthHeader));
+  if (authorization === null || authorization === undefined) return res.status(401).json(ErrorResponse.from(ErrorMessages.noAuthHeader));
   if (!authorization.startsWith('Bearer')) return res.status(401).json(ErrorResponse.from(ErrorMessages.invalidAuthHeader));
 
   const token = authorization.split(' ')[1];

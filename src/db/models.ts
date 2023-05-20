@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 import {
   PendingOTPSchema,
-  CoinSchema, NotificationSchema, TransactionSchema, WalletSchema, UserSettingsSchema, UserSchema
+  CoinSchema,
+  NotificationSchema,
+  TransactionSchema,
+  WalletSchema,
+  UserSettingsSchema,
+  UserSchema
 } from './schemata';
 
 export const UserModel = mongoose.model('User', UserSchema);

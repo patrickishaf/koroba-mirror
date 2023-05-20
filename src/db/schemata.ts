@@ -22,9 +22,10 @@ export const CoinSchema = new mongoose.Schema({
 });
 
 export const WalletSchema = new mongoose.Schema({
-  network: String,
-  address: String,
+  currencyName: String,
+  currencySymbol: String,
   balance: Number,
+  ownerId: String,
 });
 
 export const PendingOTPSchema = new mongoose.Schema({
@@ -90,4 +91,5 @@ export const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
   settings: UserSettingsSchema,
+  wallets: [WalletSchema]
 });

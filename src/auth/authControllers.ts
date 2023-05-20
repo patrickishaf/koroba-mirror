@@ -27,7 +27,8 @@ import {
 } from "./models";
 import { OTP_INVALIDATION_DELAY } from "./utils";
 import settingsEventBus from "../settings/settingsEventBus";
-import { SettingsEvents } from "../core/events";
+import { AuthEvents, SettingsEvents } from "../core/events";
+import walletEventListener from "../wallets/walletEventListener";
 
 export const signUp = async (req: Request, res: Response) => {
   try {
@@ -138,6 +139,7 @@ export const verifyRegistrationEmail = async (req: Request, res: Response) => {
     const result = await saveUserToDb(user);
     
     settingsEventBus.emit(SettingsEvents.CREATE_USER_SETTINGS, result.id);
+    walletEventListener.emit(AuthEvents.NEW_ACCOUNT_CREATED, userID)
 
     res.status(200).json(SuccessResponse.from({
       id: result.id,

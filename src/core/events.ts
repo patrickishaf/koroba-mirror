@@ -22,3 +22,7 @@ export enum TradingEvents {
 export enum WalletEvents {
   CREATE_WALLET_FOR_USER = 'create_Wallet_for_user'
 }
+
+export enum AuthEvents {
+  NEW_ACCOUNT_CREATED = 'new_account_created'
+}

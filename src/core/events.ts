@@ -18,3 +18,7 @@ export enum TradingEvents {
   TRANSACTION_SAVE_SUCCESS = 'txn_save_success',
   TRANSACTION_SAVE_FAILURE = 'txn_save_failure'
 }
+
+export enum WalletEvents {
+  CREATE_WALLET_FOR_USER = 'create_Wallet_for_user'
+}

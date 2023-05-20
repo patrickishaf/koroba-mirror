@@ -1,7 +1,6 @@
 import { type NextFunction, type Response } from "express";
 import { verify } from "jsonwebtoken";
-import { ErrorResponse } from "../net";
-import * as ErrorMessages from "../net/errorMessages";
+import { ErrorResponse, ErrorMessages } from "../net";
 
 const authenticateUser = (req: Request & any, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;

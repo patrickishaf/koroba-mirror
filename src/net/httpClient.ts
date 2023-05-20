@@ -1,14 +1,14 @@
 import { type AxiosInstance } from "axios";
 import type ResponseHandler from "./responseHandler";
 import { SuccessOrError } from "./responses";
-import primaryConnector from "./connectors";
 import { PrimaryResponseHandler } from "./responseHandler";
+import { primaryHttpInstance } from "./httpInstances";
 
 export default class HttpClient {
   connector: AxiosInstance;
   responseHandler: ResponseHandler;
 
-  constructor(connector: AxiosInstance = primaryConnector, responseHandler: ResponseHandler = PrimaryResponseHandler) {
+  constructor(connector: AxiosInstance = primaryHttpInstance, responseHandler: ResponseHandler = PrimaryResponseHandler) {
     this.connector = connector;
     this.responseHandler = responseHandler;
   }

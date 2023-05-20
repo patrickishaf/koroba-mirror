@@ -1,8 +1,8 @@
 import axios from "axios"
-import { config } from "dotenv";
-import { addAccessSignHeader, addTimestampHeader } from "./interceptors";
+import { config as exposeEnvironmentVariables } from "dotenv";
+import { addAccessSignHeader, addTimestampHeader } from "../interceptors";
 
-config();
+exposeEnvironmentVariables();
 
 const tradingHttpInstance = axios.create({
   baseURL: process.env.CB_BASE_URL,

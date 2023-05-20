@@ -1,7 +1,6 @@
 import { Request, Response } from "express"
-import HttpClient from "../net/httpClient"
+import { HttpClient, tradingResponseHandler } from "../net"
 import trading_urls from "./urls";
-import tradingResponseHandler from "./tradingResponseHandler";
 
 export const getRates = async (req: Request, res: Response) => {
   const { from, to } = req.query;

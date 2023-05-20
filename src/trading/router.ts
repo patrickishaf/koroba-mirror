@@ -1,9 +1,8 @@
 import { Response, Router } from "express";
 import { getRates } from "./controller";
 import authenticateUser from "../middleware/authenticateUser";
-// import { getAccountInfo } from "./net/broker";
 import { ErrorResponse, SuccessResponse } from "../net";
-import { getAccountInfo } from "./net/tradeBroker";
+import { getAccountInfo } from "./tradingService";
 
 const tradingRouter = Router();
 

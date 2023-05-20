@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ErrorResponse, SuccessResponse } from "../net/responses";
+import { ErrorResponse, SuccessResponse, ErrorMessages } from "../net";
 import { 
   hashPassword,
   checkIfEmailIsTaken,
@@ -25,7 +25,6 @@ import {
   ValidatedOTPSubmissionReqBody,
   ValidatedSignUpReqBody
 } from "./models";
-import * as ErrorMessages from "../net/errorMessages";
 import { OTP_INVALIDATION_DELAY } from "./utils";
 import settingsEventBus from "../settings/settingsEventBus";
 import { SettingsEvents } from "../core/events";

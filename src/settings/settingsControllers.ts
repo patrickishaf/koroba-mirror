@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../core/types";
-import { defaultUserSettings } from "./defaultSettings";
 import { addDefaultSettingsToUser } from "./settingsService";
 
 export const getUserSettings = (req: AuthenticatedRequest, res: Response) => {}

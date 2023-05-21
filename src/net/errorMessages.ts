@@ -9,6 +9,7 @@ const ErrorMessages = {
   OTPStillValid: 'your otp is still valid',
   noAuthHeader: 'no authorization header present',
   invalidAuthHeader: 'yor auth header is invalid',
+  insufficientFiat: (fiatSymbol: string, amountUserNeedsToSpend: number, cryptoAmount: number, cryptoSymbol: string) => `you do not have enough ${fiatSymbol}. You need ${amountUserNeedsToSpend}${fiatSymbol} to buy ${cryptoAmount}${cryptoSymbol}`
 }
 
 export default ErrorMessages

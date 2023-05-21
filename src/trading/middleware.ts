@@ -20,15 +20,25 @@ export const ensureUserHasCryptoWallet = async (req: AuthenticatedRequest, res: 
       };
       
       await walletService.createSingleWalletForUser(newWallet, existingUser.id);
+      return next()
     }
 
     next();
   } catch (e) {
-    const err = e as Error
+    const err = e as Error;
     res.status(HttpStatusCode.InternalServerError).json(ErrorResponse.from(err.message));
   }
 }
 
-export const ensureUserHasCryptoBalance = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {}
+export const ensureUserHasCryptoBalance = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const amountToBuy = req.body.cryptoAmount;
+    const userWallet = await UserModel.findOne({ email: req.user.email }).exec();
+    next();
+  } catch (e) {
+    const err = e as Error;
+    res.status(HttpStatusCode.InternalServerError).json(ErrorResponse.from(err.message));
+  }
+}
 
 export const ensureUserHasFiatBalance = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {}

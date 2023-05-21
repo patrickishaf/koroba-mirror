@@ -1,9 +1,9 @@
 import { Response, Router } from "express";
-import { buyCoin, getRates, sellCoin, swapCoin, swapFiat } from "./controller";
+import { buyCoin, getRates, sellCoin, swapCoin, swapFiat } from "./tradingControllers";
 import authenticateUser from "../middleware/authenticateUser";
 import { ErrorResponse, SuccessResponse } from "../net";
 import { getAccountInfo } from "./tradingService";
-import { ensureUserHasCryptoWallet } from "./middleware";
+import { ensureUserHasCryptoBalance, ensureUserHasCryptoWallet } from "./middleware";
 import { validateBuyCoinReqBody } from "./validators";
 
 const tradingRouter = Router();
@@ -22,7 +22,7 @@ tradingRouter.get('/test', async (_, res: Response) => {
   }
 })
 
-tradingRouter.patch('/buy', validateBuyCoinReqBody, authenticateUser, ensureUserHasCryptoWallet, buyCoin);
+tradingRouter.patch('/buy', validateBuyCoinReqBody, authenticateUser, ensureUserHasCryptoWallet, ensureUserHasCryptoBalance, buyCoin);
 
 tradingRouter.patch('/sell', authenticateUser, sellCoin);
 

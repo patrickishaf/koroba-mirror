@@ -3,6 +3,8 @@ import { buyCoin, getRates, sellCoin, swapCoin, swapFiat } from "./controller";
 import authenticateUser from "../middleware/authenticateUser";
 import { ErrorResponse, SuccessResponse } from "../net";
 import { getAccountInfo } from "./tradingService";
+import { ensureUserHasCryptoWallet } from "./middleware";
+import { validateBuyCoinReqBody } from "./validators";
 
 const tradingRouter = Router();
 
@@ -20,12 +22,12 @@ tradingRouter.get('/test', async (_, res: Response) => {
   }
 })
 
-tradingRouter.post('/buy', authenticateUser, buyCoin);
+tradingRouter.patch('/buy', validateBuyCoinReqBody, authenticateUser, ensureUserHasCryptoWallet, buyCoin);
 
-tradingRouter.post('/sell', authenticateUser, sellCoin);
+tradingRouter.patch('/sell', authenticateUser, sellCoin);
 
-tradingRouter.post('/swap-fiat', authenticateUser, swapFiat);
+tradingRouter.patch('/swap-fiat', authenticateUser, swapFiat);
 
-tradingRouter.post('/swap-coin', authenticateUser, swapCoin);
+tradingRouter.patch('/swap-coin', authenticateUser, swapCoin);
 
 export default tradingRouter;

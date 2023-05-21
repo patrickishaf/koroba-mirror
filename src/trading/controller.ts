@@ -20,7 +20,9 @@ export const getCoinPriceHistory = async (req: Request, res: Response) => {
   res.status(200).send("coin price history endpoint is under construction");
 }
 
-export const buyCoin = (req: AuthenticatedRequest, res: Response) => {}
+export const buyCoin = (req: AuthenticatedRequest, res: Response) => {
+  res.send('not implemented yet');
+}
 
 export const sellCoin = (req: AuthenticatedRequest, res: Response) => {}
 

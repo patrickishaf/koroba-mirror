@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 import app from './app';
+import { config as exposeEnvironmentVariables } from 'dotenv';
 
-app.listen(3000, () => {
+exposeEnvironmentVariables();
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
   mongoose.connect(process.env.DB_URL);
-  console.log('server is listening on port 3000');
+  console.log('server is listening on port,', PORT);
 })

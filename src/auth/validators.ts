@@ -45,7 +45,7 @@ const passwordChangeSchema = Joi.object({
 })
 
 const createErrorResponseFromValidationState = (validationState: any) => {
-  return new ErrorResponse(validationState.error.details[0].message);
+  return ErrorResponse.from(validationState.error.details[0].message);
 }
 
 export const validateLoginReqData = (req: Request, res: Response, next: NextFunction) => {

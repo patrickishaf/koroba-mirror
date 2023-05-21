@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "axios";
 import { ErrorResponse, SuccessOrError, SuccessResponse } from "./responses";
 
 type HandleFunc = (res: any) => SuccessOrError
@@ -8,7 +9,7 @@ interface ResponseHandler {
 
 export const PrimaryResponseHandler: ResponseHandler = {
   handleResponse(res: any) {
-    return (res.status === 200) ? new SuccessResponse(res.data) : new ErrorResponse(res.data);
+    return (res.status === HttpStatusCode.Ok) ? new SuccessResponse(res.data) : new ErrorResponse(res.data);
   }
 }
 
@@ -17,7 +18,7 @@ export const tradingResponseHandler: ResponseHandler = {
     if (res.data.Response === 'Error') {
       return new ErrorResponse(res.data.Message)
     }
-    return (res.status === 200) ? new SuccessResponse(res.data) : new ErrorResponse(res.data);
+    return (res.status === HttpStatusCode.Ok) ? new SuccessResponse(res.data) : new ErrorResponse(res.data);
   }
 }
 

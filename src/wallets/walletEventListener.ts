@@ -1,9 +1,11 @@
 import { EventEmitter } from 'events'
-import { AuthEvents } from '../core/events';
-import { createDefaultWalletsForUser } from './walletService';
+import { AuthEvents, WalletEvents } from '../core/events';
+import { createDefaultWalletsForUser, createSingleWalletForUser } from './walletService';
 
 const walletEventListener = new EventEmitter();
 
-walletEventListener.on(AuthEvents.NEW_ACCOUNT_CREATED, createDefaultWalletsForUser)
+walletEventListener.on(AuthEvents.NEW_ACCOUNT_CREATED, createDefaultWalletsForUser);
 
-export default walletEventListener
+walletEventListener.on(WalletEvents.CREATE_WALLET_FOR_USER, createSingleWalletForUser);
+
+export default walletEventListener;

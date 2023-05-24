@@ -16,16 +16,17 @@ export const getRates = async (req: Request, res: Response) => {
 }
 
 export const getCoinInfo = async (req: Request, res: Response) => {
-  res.status(HttpStatusCode.Ok).send("coin info endpoint is under construction");
+  res.status(HttpStatusCode.Ok).send('coin info endpoint is under construction');
 }
 
 export const getCoinPriceHistory = async (req: Request, res: Response) => {
-  res.status(HttpStatusCode.Ok).send("coin price history endpoint is under construction");
+  res.status(HttpStatusCode.Ok).send('coin price history endpoint is under construction');
 }
 
 export const buyCoin = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { fiatSymbol, cryptoSymbol, fiatAmount, cryptoAmount } = req.body;
+
     const existingUser = await UserModel.findOne({ email: req.user.email }).exec();
     let matchingWallet = existingUser.wallets.find((wallet) => wallet.currencySymbol === req.body.cryptoSymbol);
 
@@ -41,10 +42,7 @@ export const buyCoin = async (req: AuthenticatedRequest, res: Response) => {
     }
     
     const rate = await getExchangeRates(cryptoSymbol, fiatSymbol);
-
-    // Check if the user has enough fiat in their wallet
-    // If the user doesn't have enough fiat, return an error message. Ask them to load more fiat
-    const amountUserNeedsToSpend = rate * cryptoAmount
+    const amountUserNeedsToSpend = rate * cryptoAmount;
 
     if (matchingWallet.balance < amountUserNeedsToSpend) {
       return res.status(HttpStatusCode.Conflict).json(ErrorResponse.from(ErrorMessages.insufficientFiat(fiatSymbol, amountUserNeedsToSpend, cryptoAmount, cryptoSymbol)));
@@ -52,15 +50,33 @@ export const buyCoin = async (req: AuthenticatedRequest, res: Response) => {
 
     // if the user has enough fiat, trigger buy
 
-    res.status(HttpStatusCode.Ok).json("still under construction");
+    // decrease user's fiat balance
+
+    // increase user's crypto balance
+
+    // create a transaction
+
+    // save the transaction to the db
+
+    // notify user via email
+
+    // send push notification to user
+
+    res.status(HttpStatusCode.Ok).json('still under construction');
   } catch (e) {
     const err = e as Error;
     return ErrorResponse.from(err.message);
   }
 }
 
-export const sellCoin = (req: AuthenticatedRequest, res: Response) => {}
+export const sellCoin = (req: AuthenticatedRequest, res: Response) => {
+  res.status(HttpStatusCode.Ok).send('sell coin endpoint is under construction');
+}
 
-export const swapFiat = (req: AuthenticatedRequest, res: Response) => {}
+export const swapFiat = (req: AuthenticatedRequest, res: Response) => {
+  res.status(HttpStatusCode.Ok).send('swap fiat endpoint is under construction');
+}
 
-export const swapCoin = (req: AuthenticatedRequest, res: Response) => {}
+export const swapCoin = (req: AuthenticatedRequest, res: Response) => {
+  res.status(HttpStatusCode.Ok).send('swap coin endpoint is under construction');
+}

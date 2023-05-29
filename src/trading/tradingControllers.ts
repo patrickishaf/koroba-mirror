@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { AuthenticatedRequest } from '../core/types';
-import { createMissingWalletForUser, getRates as getExchangeRates } from './tradingService';
+import { createMissingWalletForUser, decrementWalletBalance, getRates as getExchangeRates, incrementWalletBalance } from './tradingService';
 import { HttpStatusCode } from 'axios';
 import { ErrorMessages, ErrorResponse, SuccessResponse } from '../net';
 import { UserModel } from '../db/models';
@@ -27,32 +27,53 @@ export const buyCoin = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { fiatSymbol, cryptoSymbol, fiatAmount, cryptoAmount } = req.body;
 
-    const existingUser = await UserModel.findOne({ email: req.user.email }).exec();
-    let matchingWallet = existingUser.wallets.find((wallet) => wallet.currencySymbol === req.body.cryptoSymbol);
+    /**
+     * If a user wants to buy CRYPTO with FIAT, they will have two wallets - a FIAT wallet and a CRYPTO wallet
+     * By default, they will have an FIAT wallet because it will be created for them on account registration
+     * 
+     * If they don't have a CRYPTO wallet, it will be created for them by this process.
+     * 
+     * You will find out the equivalent of the amount of CRYPTO they want to buy in FIAT.
+     * Then you will find out if their FIAT balance is up to it.
+     * If their FIAT balance is not up to it, send them an error
+     * If their FIAT balance is enough, decrement their FIAT wallet and increment their crypto wallet.
+     * 
+     * Dispatch notifications to the user
+     * Create a transaction and save it in the db
+     */
 
-    if (matchingWallet === undefined) {
+    const existingUser = await UserModel.findOne({ email: req.user.email }).exec();
+
+    let receivingWallet = existingUser.wallets.find((wallet) => wallet.currencySymbol === cryptoSymbol);
+    const sendingWallet = existingUser.wallets.find((wallet) => wallet.currencySymbol === fiatSymbol);
+
+    if (sendingWallet === undefined) return res.status(HttpStatusCode.NotAcceptable).json(ErrorResponse.from(ErrorMessages.noExistingWallet(fiatSymbol)))
+
+    if (receivingWallet === undefined) {
       const newWallet: Wallet = {
         currencyName: req.body.currencyName,
-        currencySymbol: req.body.cryptoSymbol,
+        currencySymbol: cryptoSymbol,
         balance: 0,
         ownerId: existingUser.id
       };
       
-      matchingWallet = await createMissingWalletForUser(newWallet, existingUser.id);
+      receivingWallet = await createMissingWalletForUser(newWallet, existingUser.id);
     }
     
     const rate = await getExchangeRates(cryptoSymbol, fiatSymbol);
-    const amountUserNeedsToSpend = rate * cryptoAmount;
+    const fiatAmountUserNeedsToSpend = rate * cryptoAmount;
 
-    if (matchingWallet.balance < amountUserNeedsToSpend) {
-      return res.status(HttpStatusCode.Conflict).json(ErrorResponse.from(ErrorMessages.insufficientFiat(fiatSymbol, amountUserNeedsToSpend, cryptoAmount, cryptoSymbol)));
+    if (sendingWallet.balance < fiatAmountUserNeedsToSpend) {
+      return res.status(HttpStatusCode.Conflict).json(ErrorResponse.from(ErrorMessages.insufficientFiat(fiatSymbol, fiatAmountUserNeedsToSpend, cryptoAmount, cryptoSymbol)));
     }
 
     // if the user has enough fiat, trigger buy
 
     // decrease user's fiat balance
+    await decrementWalletBalance(sendingWallet.toObject(), fiatAmountUserNeedsToSpend)
 
     // increase user's crypto balance
+    await incrementWalletBalance(receivingWallet.toObject(), cryptoAmount)
 
     // create a transaction
 
@@ -62,7 +83,7 @@ export const buyCoin = async (req: AuthenticatedRequest, res: Response) => {
 
     // send push notification to user
 
-    res.status(HttpStatusCode.Ok).json('still under construction');
+    res.status(HttpStatusCode.Ok).send(`successfully bought ${cryptoAmount} ${cryptoSymbol.toUpperCase()} with ${fiatAmountUserNeedsToSpend} ${fiatSymbol.toUpperCase()}`);
   } catch (e) {
     const err = e as Error;
     return ErrorResponse.from(err.message);

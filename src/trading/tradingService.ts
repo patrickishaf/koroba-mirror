@@ -4,6 +4,7 @@ import { ErrorResponse, HttpClient, SuccessResponse, tradingResponseHandler } fr
 import trading_urls from './urls';
 import { createSingleWalletForUser } from '../wallets/walletService';
 import { Wallet } from '../wallets/models';
+import { WalletModel } from '../db/models';
 
 exposeEnvironmentVariables();
 
@@ -46,5 +47,41 @@ export const getAccountInfo = async () => {
   } catch (e) {
     const err = e as Error;
     throw new Error(err.message);
+  }
+}
+
+export const decrementWalletBalance = async (wallet: Wallet, byAmount: number) => {
+  try {
+    const decrementedWallet = await WalletModel.findOneAndUpdate(
+      {
+        ownerId: wallet.ownerId,
+        currencySymbol: wallet.currencySymbol,
+      },
+      {
+        balance: wallet.balance - byAmount
+      }
+    )
+    return decrementedWallet
+  } catch (e) {
+    const err = e as Error
+    throw new Error(err.message)
+  }
+}
+
+export const incrementWalletBalance = async (wallet: Wallet, byAmount: number) => {
+  try {
+    const incrementedWallet = await WalletModel.findOneAndUpdate(
+      {
+        ownerId: wallet.ownerId,
+        currencySymbol: wallet.currencySymbol,
+      },
+      {
+        balance: wallet.balance + byAmount
+      }
+    )
+    return incrementedWallet
+  } catch (e) {
+    const err = e as Error
+    throw new Error(err.message)
   }
 }

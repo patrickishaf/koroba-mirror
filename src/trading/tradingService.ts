@@ -1,10 +1,11 @@
 import { Spot } from '@binance/connector';
 import { config as exposeEnvironmentVariables } from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 import { ErrorResponse, HttpClient, SuccessResponse, tradingResponseHandler } from '../net';
 import trading_urls from './urls';
 import { createSingleWalletForUser } from '../wallets/walletService';
 import { Wallet } from '../wallets/models';
-import { WalletModel } from '../db/models';
+import { UserModel, WalletModel } from '../db/models';
 
 exposeEnvironmentVariables();
 
@@ -50,17 +51,12 @@ export const getAccountInfo = async () => {
   }
 }
 
-export const decrementWalletBalance = async (wallet: Wallet, byAmount: number) => {
+export const decrementWalletBalance = async (walletData: Wallet, byAmount: number) => {
   try {
-    const decrementedWallet = await WalletModel.findOneAndUpdate(
-      {
-        ownerId: wallet.ownerId,
-        currencySymbol: wallet.currencySymbol,
-      },
-      {
-        balance: wallet.balance - byAmount
-      }
-    )
+    const walletOwner = await UserModel.findOne({ id: walletData.ownerId }).exec()
+    const decrementedWallet = await walletOwner.wallets.find((wallet) => wallet.currencySymbol === walletData.currencySymbol)
+    decrementedWallet.balance = decrementedWallet.balance - byAmount
+    await walletOwner.save()
     return decrementedWallet
   } catch (e) {
     const err = e as Error
@@ -68,19 +64,27 @@ export const decrementWalletBalance = async (wallet: Wallet, byAmount: number) =
   }
 }
 
-export const incrementWalletBalance = async (wallet: Wallet, byAmount: number) => {
+export const incrementWalletBalance = async (walletData: Wallet, byAmount: number) => {
   try {
-    const incrementedWallet = await WalletModel.findOneAndUpdate(
-      {
-        ownerId: wallet.ownerId,
-        currencySymbol: wallet.currencySymbol,
-      },
-      {
-        balance: wallet.balance + byAmount
-      }
-    )
+    const walletOwner = await UserModel.findOne({ id: walletData.ownerId }).exec()
+    const incrementedWallet = await walletOwner.wallets.find((wallet) => (wallet.currencySymbol === walletData.currencySymbol))
+    incrementedWallet.balance = incrementedWallet.balance + byAmount
+    await walletOwner.save()
     return incrementedWallet
   } catch (e) {
+    const err = e as Error
+    throw new Error(err.message)
+  }
+}
+
+export const generateNewId = () => uuidv4()
+
+export const saveTransactionIdToUserTransactions = async (userId: string, transactionId: string) => {
+  try {
+    const user = await UserModel.findOne({ id: userId }).exec()
+    user.transactionIds.push(transactionId)
+    await user.save()
+  } catch(e) {
     const err = e as Error
     throw new Error(err.message)
   }

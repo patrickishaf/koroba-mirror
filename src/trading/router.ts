@@ -8,8 +8,6 @@ import { validateBuyCoinReqBody } from "./validators";
 
 const tradingRouter = Router();
 
-tradingRouter.use(authenticateUser);
-
 tradingRouter.get('/rates', getRates);
 
 tradingRouter.get('/test', async (_, res: Response) => {

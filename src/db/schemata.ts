@@ -11,9 +11,20 @@ export const PriceAlertSchema = new mongoose.Schema({
   timestamp: Date
 });
 
+export const TransactionParticipantSchema = new mongoose.Schema({
+  userId: String,
+  walletSymbol: String,
+  previousWalletBalance: Number,
+  newWalletBalance: Number,
+  amount: Number
+})
+
 export const TransactionSchema = new mongoose.Schema({
-  amount: Number,
-  date: Date,
+  id: String,
+  timestamp: Number,
+  type: String,
+  fromDetails: TransactionParticipantSchema,
+  toDetails: TransactionParticipantSchema
 });
 
 export const CoinSchema = new mongoose.Schema({
@@ -91,5 +102,6 @@ export const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
   settings: UserSettingsSchema,
-  wallets: [WalletSchema]
+  wallets: [WalletSchema],
+  transactionIds: [String]
 });

@@ -17,7 +17,7 @@ export enum TradingEvents {
   REVERSAL_FAILURE = 'reversal_failure',
   TRANSACTION_SAVE_SUCCESS = 'txn_save_success',
   TRANSACTION_SAVE_FAILURE = 'txn_save_failure',
-  BUY_COIN_SUCCESS = 'buy_coin_success'
+  SAVE_TRANSACTION = 'save_transaction'
 }
 
 export enum WalletEvents {

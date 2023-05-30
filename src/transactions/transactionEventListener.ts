@@ -6,6 +6,6 @@ const transactionEventListener = new EventEmitter()
 
 transactionEventListener.on(TradingEvents.BUY_COIN_REQUESTED, createPendingTransaction)
 
-transactionEventListener.on(TradingEvents.BUY_COIN_SUCCESS, saveTransaction)
+transactionEventListener.on(TradingEvents.SAVE_TRANSACTION, saveTransaction)
 
 export default transactionEventListener
